@@ -1,0 +1,25 @@
+package com.assignment.asm.dto.response.order;
+
+import com.assignment.asm.dto.request.order.CreateOrderRequest;
+import com.assignment.asm.dto.request.orderDetail.CreateOrderDetailRequest;
+import com.assignment.asm.dto.response.orderDetail.CreateOrderDetailResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CreateOrderResponse {
+    private Double totalPrice;
+
+    private int totalProduct;
+
+    private String status;
+
+    private List<CreateOrderDetailResponse> createOrderDetailResponses;
+}
