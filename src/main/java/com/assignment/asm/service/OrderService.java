@@ -29,19 +29,24 @@ public class OrderService implements IOrderService {
         double totalPrice = 0;
         int totalProduct = 0;
         List<CreateOrderDetailResponse> createOrderDetailResponses = new ArrayList<>();
+        Order order = new Order();
+        order.setStatus("ACTIVE");
+        orderRepository.save(order);
         for (CreateOrderDetailRequest createOrderDetailRequest : request.getDetails()){
             Product product = productRepository.findById(createOrderDetailRequest.getProduct_id()).orElse(null);
             OrderDetail orderDetail = orderDetailMapper.toModel(createOrderDetailRequest);
+            orderDetail.setPrice(product.getPrice() * createOrderDetailRequest.getQuantity());
+            orderDetail.setProduct(product);
+            orderDetail.setOrder(order);
+            orderDetailRepository.save(orderDetail);
             totalPrice += product.getPrice() * orderDetail.getQuantity();
             totalProduct += orderDetail.getQuantity();
-            orderDetailRepository.save(orderDetail);
             createOrderDetailResponses.add(orderDetailMapper.toResponse(orderDetail));
         }
 
-        Order order = new Order();
+
         order.setTotalPrice(totalPrice);
         order.setTotalProduct(totalProduct);
-        order.setStatus("ACTIVE");
 //        order.setUser();
         orderRepository.save(order);
         CreateOrderResponse createOrderResponse = new CreateOrderResponse();

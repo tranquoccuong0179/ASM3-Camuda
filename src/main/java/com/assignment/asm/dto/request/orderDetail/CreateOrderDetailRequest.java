@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateOrderDetailRequest {
     private int quantity;
-    private Double price;
     private Long product_id;
 }

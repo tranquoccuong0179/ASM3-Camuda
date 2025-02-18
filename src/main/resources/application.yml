@@ -25,4 +25,4 @@ server:
 idp:
     url: http://localhost:9090
     client-id: assignment_app
-    client-secret: D8MtYQY2a3blC9rTLSSKiIOQJr4z94nZ
+    client-secret: zHGtRSVqDYszbKGraMqgnTlnunYc50wY

@@ -23,6 +23,7 @@ public class ProductService implements IProductService {
     @Override
     public CreateProductResponse createProduct(CreateProductRequest request) {
         Product product = productMapper.toModel(request);
+        product.setActive(true);
         productRepository.save(product);
         return productMapper.toResponse(product);
     }
