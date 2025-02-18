@@ -35,7 +35,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<GetProductResponse> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findAllActive();
         return products.stream().map(productMapper::fromProductToResponse).toList();
     }
 
@@ -43,6 +43,7 @@ public class ProductService implements IProductService {
     public boolean deleteProduct(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         product.setActive(false);
+        productRepository.save(product);
         return true;
     }
 

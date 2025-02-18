@@ -15,13 +15,14 @@ spring:
             resourceserver:
               jwt:
                 issuer-uri: http://localhost:9090/realms/Provider-User
-    camunda:
-        bpm:
-            database:
-                schema: camunda
+camunda:
+    bpm:
+        admin-user:
+            id: demo
+            password: demo
 server:
     port: 8080
 idp:
     url: http://localhost:9090
     client-id: assignment_app
-    client-secret: zHGtRSVqDYszbKGraMqgnTlnunYc50wY
+    client-secret: D8MtYQY2a3blC9rTLSSKiIOQJr4z94nZ
