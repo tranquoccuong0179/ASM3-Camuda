@@ -8,6 +8,7 @@ import com.assignment.asm.dto.response.product.GetProductResponse;
 import com.assignment.asm.dto.response.product.UpdateProductResponse;
 import com.assignment.asm.service.IProductService;
 import com.assignment.asm.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,6 +24,7 @@ public class ProductController {
     private final IProductService productService;
 
     @PostMapping
+    @Operation(summary = "API tạo sản phẩm mới")
     public ResponseEntity<ApiResponse<CreateProductResponse>> addProduct(@RequestBody CreateProductRequest request) {
         try {
             CreateProductResponse response = productService.createProduct(request);
@@ -35,6 +37,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "API xem tất cả các sản phẩm có trong hệ thống")
     public ResponseEntity<ApiResponse<List<GetProductResponse>>> getProducts() {
         List<GetProductResponse> list = productService.getAllProducts();
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -43,6 +46,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "API xem sản phẩm với id đó có trong hệ thống")
     public ResponseEntity<ApiResponse<GetProductResponse>> getProductById(@PathVariable Long id) {
         GetProductResponse product = productService.getProduct(id);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -51,6 +55,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "API xóa sản phẩm có trong hệ thống")
     public ResponseEntity<ApiResponse<Boolean>> deleteProduct(@PathVariable Long id) {
         boolean result = productService.deleteProduct(id);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -59,6 +64,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "API cập nhật sản phẩm có trong hệ thống")
     public ResponseEntity<ApiResponse<UpdateProductResponse>> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest request) {
         UpdateProductResponse response = productService.updateProduct(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(

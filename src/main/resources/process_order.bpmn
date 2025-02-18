@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0worb9a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
-  <bpmn:process id="process_o" name="Process Order" isExecutable="true" camunda:historyTimeToLive="P30D">
+  <bpmn:process id="process_order" name="Process Order" isExecutable="true" camunda:historyTimeToLive="P30D">
     <bpmn:startEvent id="StartEvent_1" name="Start Order Processing">
       <bpmn:outgoing>Flow_0960u1h</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1tjvjl3" messageRef="Message_0a5nc8x" />
@@ -15,16 +15,16 @@
       <bpmn:incoming>Flow_1ga2gb9</bpmn:incoming>
       <bpmn:outgoing>Flow_18pqz9c</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_Auto_Process_Order" name="Automated order processing">
+    <bpmn:serviceTask id="Activity_Auto_Process_Order" name="Automated order processing" camunda:class="com.assignment.asm.delegate.DelegateAutoProcessOrder">
       <bpmn:incoming>Flow_18pqz9c</bpmn:incoming>
       <bpmn:outgoing>Flow_1xklm7t</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_Confirm_Order" name="Order Confirm">
+    <bpmn:serviceTask id="Activity_Confirm_Order" name="Order Confirm" camunda:class="com.assignment.asm.delegate.DelegateConfirmOrder">
       <bpmn:incoming>Flow_1xklm7t</bpmn:incoming>
       <bpmn:outgoing>Flow_0rg0ol4</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0rg0ol4" sourceRef="Activity_Confirm_Order" targetRef="Activity_Email_Order_Information" />
-    <bpmn:serviceTask id="Activity_Email_Order_Information" name="Email order information">
+    <bpmn:serviceTask id="Activity_Email_Order_Information" name="Email order information" camunda:class="com.assignment.asm.delegate.DelegateEmailOrderInformation">
       <bpmn:incoming>Flow_0rg0ol4</bpmn:incoming>
       <bpmn:outgoing>Flow_1rhli3v</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -45,7 +45,7 @@
     <bpmn:intermediateCatchEvent id="Event_1193a9s">
       <bpmn:incoming>Flow_1vnuqct</bpmn:incoming>
       <bpmn:outgoing>Flow_059j42c</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_08y0acw" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_08y0acw" messageRef="Message_0a5nc8x" />
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_1vnuqct" sourceRef="Event_0eg8gxj" targetRef="Event_1193a9s" />
     <bpmn:endEvent id="Event_19upgjx" name="End (Timeout)">
@@ -84,7 +84,7 @@
   </bpmn:process>
   <bpmn:message id="Message_0a5nc8x" name="Message_Start_Order_Processing" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_o">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_order">
       <bpmndi:BPMNShape id="Event_1n5un1q_di" bpmnElement="StartEvent_1" bioc:stroke="#0d4372" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#0d4372">
         <dc:Bounds x="192" y="452" width="36" height="36" />
         <bpmndi:BPMNLabel>
