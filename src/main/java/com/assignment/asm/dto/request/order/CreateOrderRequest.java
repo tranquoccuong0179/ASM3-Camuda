@@ -15,6 +15,4 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateOrderRequest {
     List<CreateOrderDetailRequest> details;
-    @NotBlank
-    private String businessKey;
 }

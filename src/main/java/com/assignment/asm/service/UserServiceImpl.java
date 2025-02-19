@@ -33,7 +33,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
     UserRepository userRepository;
     UserMapper userMapper;
     KeyCloakRepository keyCloakRepository;

@@ -1,14 +1,8 @@
 package com.assignment.asm.controller;
 
-import com.assignment.asm.dto.ApiResponse;
-import com.assignment.asm.dto.request.RegistrationRequest;
 import com.assignment.asm.dto.response.UserResponse;
-import com.assignment.asm.model.User;
-import com.assignment.asm.repository.UserRepository;
 import com.assignment.asm.service.IReportService;
-import com.assignment.asm.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+import com.assignment.asm.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileNotFoundException;
@@ -31,12 +23,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReportController {
     IReportService reportService;
-    UserService userService;
+    IUserService IUserService;
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/generate-pdf")
     public ResponseEntity<byte[]> generatePdf() {
         try {
-            List<UserResponse> users = userService.getAllProfiles();
+            List<UserResponse> users = IUserService.getAllProfiles();
             byte[] content = reportService.generatePdfListUser(users);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "inline; filename=report_user.pdf");
@@ -55,7 +47,7 @@ public class ReportController {
     @GetMapping("/generate-excel")
     public ResponseEntity<byte[]> generateExcel() {
         try {
-            List<UserResponse> users = userService.getAllProfiles();
+            List<UserResponse> users = IUserService.getAllProfiles();
             byte[] content = reportService.generateExcelListUser(users);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "inline; filename=report_user.xlsx");

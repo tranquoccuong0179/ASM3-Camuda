@@ -8,7 +8,7 @@ import com.assignment.asm.dto.request.UpdateUserRequest;
 import com.assignment.asm.dto.response.LoginResponse;
 import com.assignment.asm.dto.response.UserResponse;
 import com.assignment.asm.dto.response.UpdateUserResponse;
-import com.assignment.asm.service.UserService;
+import com.assignment.asm.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    UserService userService;
+    IUserService IUserService;
 
 
     @PostMapping("/register")
@@ -31,7 +31,7 @@ public class UserController {
     ApiResponse<UserResponse> register(@RequestBody @Valid RegistrationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .data(userService.registration(request))
+                .data(IUserService.registration(request))
                 .build();
     }
 
@@ -41,7 +41,7 @@ public class UserController {
     ApiResponse<List<UserResponse>> getAllProfiles() {
         return ApiResponse.<List<UserResponse>>builder()
                 .code(200)
-                .data(userService.getAllProfiles())
+                .data(IUserService.getAllProfiles())
                 .build();
     }
 
@@ -50,7 +50,7 @@ public class UserController {
     ApiResponse<UserResponse> getUserProfiles() {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .data(userService.getProfileById())
+                .data(IUserService.getProfileById())
                 .build();
     }
 
@@ -59,7 +59,7 @@ public class UserController {
     ApiResponse<LoginResponse> Login(@RequestBody LoginRequest request) {
         return ApiResponse.<LoginResponse>builder()
                 .code(200)
-                .data(userService.login(request))
+                .data(IUserService.login(request))
                 .build();
     }
 
@@ -69,7 +69,7 @@ public class UserController {
     ApiResponse<Boolean> Delete(@PathVariable Long id) {
         return ApiResponse.<Boolean>builder()
                 .code(200)
-                .data(userService.deleteProfile(id))
+                .data(IUserService.deleteProfile(id))
                 .build();
     }
 
@@ -78,7 +78,7 @@ public class UserController {
     ApiResponse<UpdateUserResponse> Delete(@RequestBody @Valid UpdateUserRequest request) {
         return ApiResponse.<UpdateUserResponse>builder()
                 .code(200)
-                .data(userService.updateUser(request))
+                .data(IUserService.updateUser(request))
                 .build();
     }
 
@@ -87,7 +87,7 @@ public class UserController {
     ApiResponse<Boolean> Delete(@RequestBody ChangePasswordRequest password) {
         return ApiResponse.<Boolean>builder()
                 .code(200)
-                .data(userService.changePassword(password))
+                .data(IUserService.changePassword(password))
                 .build();
     }
 }

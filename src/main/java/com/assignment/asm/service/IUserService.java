@@ -10,7 +10,7 @@ import com.assignment.asm.dto.response.UpdateUserResponse;
 
 import java.util.List;
 
-public interface UserService {
+public interface IUserService {
     public List<UserResponse> getAllProfiles();
     public UserResponse registration(RegistrationRequest request);
     public UserResponse getProfileById();
