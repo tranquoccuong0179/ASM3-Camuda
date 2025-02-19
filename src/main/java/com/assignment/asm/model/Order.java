@@ -26,6 +26,8 @@ public class Order {
 
     private String status;
 
+    private String businessKey;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore

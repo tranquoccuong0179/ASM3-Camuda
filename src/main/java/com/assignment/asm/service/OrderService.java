@@ -8,9 +8,12 @@ import com.assignment.asm.mapper.OrderDetailMapper;
 import com.assignment.asm.model.Order;
 import com.assignment.asm.model.OrderDetail;
 import com.assignment.asm.model.Product;
+import com.assignment.asm.model.User;
 import com.assignment.asm.repository.OrderDetailRepository;
 import com.assignment.asm.repository.OrderRepository;
 import com.assignment.asm.repository.ProductRepository;
+import com.assignment.asm.repository.UserRepository;
+import com.assignment.asm.utils.AuthenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +27,11 @@ public class OrderService implements IOrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final ProductRepository productRepository;
     private final OrderDetailMapper orderDetailMapper;
+    private final UserRepository userRepository;
     @Override
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
+//        long userId = AuthenUtil.getUserId();
+//        User user = userRepository.findById(userId).orElse(null);
         double totalPrice = 0;
         int totalProduct = 0;
         List<CreateOrderDetailResponse> createOrderDetailResponses = new ArrayList<>();
@@ -47,7 +53,7 @@ public class OrderService implements IOrderService {
 
         order.setTotalPrice(totalPrice);
         order.setTotalProduct(totalProduct);
-//        order.setUser();
+//        order.setUser(user);
         orderRepository.save(order);
         CreateOrderResponse createOrderResponse = new CreateOrderResponse();
         createOrderResponse.setTotalPrice(totalPrice);

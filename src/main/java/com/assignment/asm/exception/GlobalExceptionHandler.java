@@ -3,6 +3,7 @@ package com.assignment.asm.exception;
 import com.assignment.asm.dto.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler {
     private static final String MIN_ATTRIBUTE = "min";
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
+    ResponseEntity<ApiResponse> handleGeneralException(Exception exception) {
         log.error("Exception: ", exception);
         ApiResponse apiResponse = new ApiResponse();
 
@@ -28,6 +29,18 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
+
+    @ExceptionHandler(value = RuntimeException.class)
+    ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException exception) {
+        log.error("RuntimeException: ", exception);
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.setCode(ErrorCode.RUNTIME_EXCEPTION.getCode());
+        apiResponse.setMessage(exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+    }
+
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
