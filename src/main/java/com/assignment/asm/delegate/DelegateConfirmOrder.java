@@ -26,7 +26,7 @@ public class DelegateConfirmOrder implements JavaDelegate {
 
         order.setStatus(OrderEnum.APPROVED.toString());
         orderRepository.save(order);
-        delegateExecution.setVariable("orderId", order.getId());
+        delegateExecution.setVariable("orderId",orderId);
 
     }
 }
