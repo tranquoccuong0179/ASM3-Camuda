@@ -1,9 +1,13 @@
 package com.assignment.asm.service;
 
 import com.assignment.asm.dto.request.order.CreateOrderRequest;
+import com.assignment.asm.dto.request.order.UpdateOrderRequest;
 import com.assignment.asm.dto.request.orderDetail.CreateOrderDetailRequest;
 import com.assignment.asm.dto.response.order.CreateOrderResponse;
+import com.assignment.asm.dto.response.order.GetOrderResponse;
+import com.assignment.asm.dto.response.order.UpdateOrderResponse;
 import com.assignment.asm.dto.response.orderDetail.CreateOrderDetailResponse;
+import com.assignment.asm.enums.OrderEnum;
 import com.assignment.asm.mapper.OrderDetailMapper;
 import com.assignment.asm.model.Order;
 import com.assignment.asm.model.OrderDetail;
@@ -22,7 +26,9 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.NotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.camunda.bpm.admin.impl.plugin.resources.MetricsRestService.objectMapper;
 
@@ -49,7 +55,7 @@ public class OrderService implements IOrderService {
         List<CreateOrderDetailResponse> createOrderDetailResponses = new ArrayList<>();
 
         Order order = new Order();
-        order.setStatus("ACTIVE");
+        order.setStatus(OrderEnum.PENDING.toString());
         orderRepository.save(order);
 
         for (CreateOrderDetailRequest detailRequest : request.getDetails()) {
@@ -104,9 +110,122 @@ public class OrderService implements IOrderService {
                 log.error("Error processing order task: ", e);
             }
         } else {
-            log.warn("Không tìm thấy task với businessKey: {}", businessKey);
+            log.warn("Do not find task với businessKey: {}", businessKey);
         }
 
         return createOrderResponse;
     }
+
+    @Override
+    public UpdateOrderResponse updateOrder(Long id, UpdateOrderRequest request) {
+        Order order = orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            throw new NotFoundException("Order not found");
+        }
+
+        double totalPrice = 0;
+        int totalProduct = 0;
+        boolean orderIsValid = true;
+        boolean hasUpdated = false;
+        List<CreateOrderDetailResponse> updateOrderDetailResponses = new ArrayList<>();
+
+        for (CreateOrderDetailRequest detailRequest : request.getDetails()) {
+            OrderDetail orderDetail = orderDetailRepository.findByOrderAndProductId(order, detailRequest.getProduct_id())
+                    .orElse(null);
+            if (orderDetail == null) {
+                continue;
+            }
+
+            Product product = productRepository.findById(detailRequest.getProduct_id()).orElse(null);
+            if (product == null) {
+                continue;
+            }
+
+            if (detailRequest.getQuantity() > product.getQuantity()) {
+                orderIsValid = false;
+            }
+
+            if (orderDetail.getQuantity() != detailRequest.getQuantity()) {
+                hasUpdated = true;
+            }
+
+            double itemPrice = product.getPrice() * detailRequest.getQuantity();
+            orderDetail.setQuantity(detailRequest.getQuantity());
+            orderDetail.setPrice(itemPrice);
+            orderDetailRepository.save(orderDetail);
+
+            totalPrice += itemPrice;
+            totalProduct += detailRequest.getQuantity();
+
+            updateOrderDetailResponses.add(orderDetailMapper.toResponse(orderDetail));
+        }
+        if(hasUpdated){
+            order.setTotalPrice(totalPrice);
+            order.setTotalProduct(totalProduct);
+            orderRepository.save(order);
+        }
+
+        UpdateOrderResponse updateOrderResponse = new UpdateOrderResponse();
+        updateOrderResponse.setTotalPrice(totalPrice);
+        updateOrderResponse.setTotalProduct(totalProduct);
+        updateOrderResponse.setStatus(order.getStatus());
+        updateOrderResponse.setCreateOrderDetailResponses(updateOrderDetailResponses);
+
+        if (hasUpdated) {
+            String businessKey = order.getBusinessKey();
+            Task task = taskService.createTaskQuery()
+                    .processInstanceBusinessKey(businessKey)
+                    .taskDefinitionKey("Activity_Request_Update")
+                    .singleResult();
+
+            if (task != null) {
+                Map<String, Object> variables = new HashMap<>();
+                try {
+                    variables.put("orderIsValid", orderIsValid);
+                    variables.put("customerHasCorrected", hasUpdated);
+
+                    taskService.complete(task.getId(), variables);
+                } catch (Exception e) {
+                    log.error("Error processing update order task: ", e);
+                }
+            } else {
+                log.warn("Do not find task with businessKey: {}", businessKey);
+            }
+        }
+
+        return updateOrderResponse;
+    }
+
+    @Override
+    public GetOrderResponse receiveOrder(Long id) {
+        Order order = orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            throw new NotFoundException("Order not found");
+        }
+        order.setStatus(OrderEnum.ACCEPTED.toString());
+        orderRepository.save(order);
+        GetOrderResponse getOrderResponse = new GetOrderResponse();
+        getOrderResponse.setTotalPrice(order.getTotalPrice());
+        getOrderResponse.setTotalProduct(order.getTotalProduct());
+        getOrderResponse.setStatus(order.getStatus());
+        getOrderResponse.setCreateOrderDetailResponses(order.getDetails().stream().map(orderDetailMapper::toResponse).collect(Collectors.toList()));
+        String businessKey = order.getBusinessKey();
+        Task task = taskService.createTaskQuery()
+                .processInstanceBusinessKey(businessKey)
+                .taskDefinitionKey("Activity_Receive_Order")
+                .singleResult();
+        if (task != null) {
+            Map<String, Object> variables = new HashMap<>();
+            try {
+                variables.put("orderId", order.getId());
+                taskService.complete(task.getId(), variables);
+            } catch (Exception e) {
+                log.error("Error processing update order task: ", e);
+            }
+        } else {
+            log.warn("Do not find task with businessKey: {}", businessKey);
+        }
+        return getOrderResponse;
+    }
+
 }

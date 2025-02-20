@@ -2,10 +2,7 @@ package com.assignment.asm.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -21,6 +18,7 @@ public class OrderDetail {
     private Double price;
     @ManyToOne
     @JsonIgnore
+    @ToString.Exclude
     @JoinColumn(name = "order_id")
     private Order order;
 

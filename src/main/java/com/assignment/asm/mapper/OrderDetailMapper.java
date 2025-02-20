@@ -22,4 +22,5 @@ public class OrderDetailMapper {
     public CreateOrderDetailResponse toResponse(OrderDetail orderDetail) {
         return modelMapper.map(orderDetail, CreateOrderDetailResponse.class);
     }
+
 }

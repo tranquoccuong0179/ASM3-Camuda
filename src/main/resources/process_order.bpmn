@@ -37,16 +37,10 @@
     <bpmn:sequenceFlow id="Flow_1ga2gb9" name="Yes" sourceRef="Gateway_01kcqoh" targetRef="Activity_Receive_Order">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${orderIsValid}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:intermediateCatchEvent id="Event_1193a9s">
-      <bpmn:incoming>Flow_1vnuqct</bpmn:incoming>
-      <bpmn:outgoing>Flow_059j42c</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_08y0acw" messageRef="Message_0a5nc8x" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_1vnuqct" sourceRef="Event_0eg8gxj" targetRef="Event_1193a9s" />
+    <bpmn:sequenceFlow id="Flow_1vnuqct" sourceRef="Event_0eg8gxj" targetRef="Event_19upgjx" />
     <bpmn:endEvent id="Event_19upgjx" name="End (Timeout)">
-      <bpmn:incoming>Flow_059j42c</bpmn:incoming>
+      <bpmn:incoming>Flow_1vnuqct</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_059j42c" sourceRef="Event_1193a9s" targetRef="Event_19upgjx" />
     <bpmn:exclusiveGateway id="Gateway_1si4l7b" name="Customer updated?">
       <bpmn:incoming>Flow_0gaomvc</bpmn:incoming>
       <bpmn:outgoing>Flow_1soira3</bpmn:outgoing>
@@ -59,7 +53,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${customerHasCorrected == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1dhmas3" name="Yes" sourceRef="Gateway_1si4l7b" targetRef="Gateway_01kcqoh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${customerHasCorrected == true}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${customerHasCorrected}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0r7rqj2" name="No" sourceRef="Gateway_01kcqoh" targetRef="Activity_Request_Update">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${orderIsValid == false}</bpmn:conditionExpression>
@@ -115,9 +109,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="395" y="263" width="30" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1q8lytd" bpmnElement="Event_1193a9s" bioc:stroke="#0d4372" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#0d4372">
-        <dc:Bounds x="732" y="82" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_19upgjx_di" bpmnElement="Event_19upgjx" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="822" y="82" width="36" height="36" />
@@ -177,10 +168,6 @@
       <bpmndi:BPMNEdge id="Flow_1vnuqct_di" bpmnElement="Flow_1vnuqct">
         <di:waypoint x="550" y="152" />
         <di:waypoint x="550" y="100" />
-        <di:waypoint x="732" y="100" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_059j42c_di" bpmnElement="Flow_059j42c">
-        <di:waypoint x="768" y="100" />
         <di:waypoint x="822" y="100" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1soira3_di" bpmnElement="Flow_1soira3">

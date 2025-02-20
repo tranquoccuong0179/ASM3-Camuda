@@ -13,8 +13,13 @@ spring:
     security:
         oauth2:
             resourceserver:
-              jwt:
-                issuer-uri: http://localhost:9090/realms/Provider-User
+                jwt:
+                    issuer-uri: http://localhost:9090/realms/Provider-User
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: quoccuongdevbe@gmail.com
+        password: xnfuoqsrsevibrki
 camunda:
     bpm:
         admin-user:
@@ -25,4 +30,6 @@ server:
 idp:
     url: http://localhost:9090
     client-id: assignment_app
-    client-secret: zHGtRSVqDYszbKGraMqgnTlnunYc50wY
+    client-secret: 4nBORgNvRkSDn0pJmkwAgbkFkx0KoXY7
+keycloak:
+    realm: Provider-User
