@@ -13,18 +13,18 @@ public class JavaMailService {
     private final JavaMailSender mailSender;
 
     public void sendEmail(String to, String subject, String body) {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
         try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(body, true); // true indicates HTML content
+            helper.setText(body, true);
 
             mailSender.send(message);
         } catch (MessagingException e) {
-            e.printStackTrace();
-            // Handle the exception appropriately
+            throw new RuntimeException("Failed to send email to: " + to, e);
         }
     }
+
 }

@@ -11,9 +11,15 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.NotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 
 @Component
 @Slf4j
@@ -25,26 +31,38 @@ public class DelegateEmailOrderInformation implements JavaDelegate {
     private final JavaMailService javaMailService;
 
     @Override
-    public void execute(DelegateExecution delegateExecution) {
+    public void execute(DelegateExecution delegateExecution) throws IOException {
         Long orderId = (Long) delegateExecution.getVariable("orderId");
+
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order == null) {
-            logger.error("Order not found with id: {}", orderId);
+            log.error("Order not found with id: {}", orderId);
             throw new RuntimeException("Order not found with id: " + orderId);
         }
 
         User user = userRepository.findById(order.getUser().getId()).orElse(null);
         if (user == null) {
-            logger.error("User not found with id: {}", order.getUser().getId());
+            log.error("User not found with id: {}", order.getUser().getId());
             throw new RuntimeException("User not found with id: " + order.getUser().getId());
         }
 
+        String emailBody = loadEmailTemplate();
+
         try {
-            javaMailService.sendEmail(user.getEmail(), "abggg", "abc");
-            logger.info("Email sent to: {} for order id: {}", user.getEmail(), orderId);
+            javaMailService.sendEmail(user.getEmail(), "Thông báo đơn hàng", emailBody);
+            log.info("Email sent to: {} for order id: {}", user.getEmail(), orderId);
         } catch (Exception e) {
-            logger.error("Failed to send email to: {} for order id: {}", user.getEmail(), orderId, e);
+            log.error("Failed to send email to: {} for order id: {}", user.getEmail(), orderId, e);
             throw new RuntimeException("Failed to send email", e);
+        }
+    }
+
+    private String loadEmailTemplate() {
+        try {
+            Path path = new ClassPathResource("static/order-details.html").getFile().toPath();
+            return Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read email template", e);
         }
     }
 }
