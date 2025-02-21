@@ -1,6 +1,7 @@
 package com.assignment.asm.delegate;
 
 import com.assignment.asm.model.Order;
+import com.assignment.asm.model.OrderDetail;
 import com.assignment.asm.model.User;
 import com.assignment.asm.repository.OrderRepository;
 import com.assignment.asm.repository.UserRepository;
@@ -46,7 +47,7 @@ public class DelegateEmailOrderInformation implements JavaDelegate {
             throw new RuntimeException("User not found with id: " + order.getUser().getId());
         }
 
-        String emailBody = loadEmailTemplate();
+        String emailBody = loadEmailTemplate(order, user);
 
         try {
             javaMailService.sendEmail(user.getEmail(), "Thông báo đơn hàng", emailBody);
@@ -57,12 +58,35 @@ public class DelegateEmailOrderInformation implements JavaDelegate {
         }
     }
 
-    private String loadEmailTemplate() {
+    private String loadEmailTemplate(Order order, User user) {
         try {
             Path path = new ClassPathResource("static/order-details.html").getFile().toPath();
-            return Files.readString(path, StandardCharsets.UTF_8);
+            String emailBody = Files.readString(path, StandardCharsets.UTF_8);
+
+            // Thay thế dữ liệu động vào HTML
+            emailBody = emailBody.replace("{{username}}", user.getUsername());
+
+            StringBuilder orderDetailsHtml = new StringBuilder();
+            int totalAmount = 0;
+
+            for (OrderDetail item : order.getDetails()) {
+                double itemTotal = item.getQuantity() * item.getPrice();
+                totalAmount += itemTotal;
+
+                orderDetailsHtml.append("<tr>")
+                        .append("<td>").append(item.getProduct().getName()).append("</td>")
+                        .append("<td>").append(item.getQuantity()).append("</td>")
+                        .append("<td>").append(String.format("%,.2f VND", itemTotal)).append("</td>")
+                        .append("</tr>");
+            }
+
+            emailBody = emailBody.replace("{{orderDetails}}", orderDetailsHtml.toString());
+            emailBody = emailBody.replace("{{totalAmount}}", String.format("%,d VND", totalAmount));
+
+            return emailBody;
         } catch (IOException e) {
             throw new RuntimeException("Failed to read email template", e);
         }
     }
+
 }

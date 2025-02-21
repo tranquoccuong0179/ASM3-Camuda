@@ -14,7 +14,7 @@
 <body>
 <h2>Chi tiết đơn hàng</h2>
 
-<p><strong>Username:</strong> <span id="username"></span></p>
+<p><strong>Username:</strong> {{username}}</p>
 
 <table>
     <thead>
@@ -24,38 +24,12 @@
         <th>Số tiền</th>
     </tr>
     </thead>
-    <tbody id="orderDetails">
+    <tbody>
+    {{orderDetails}}
     </tbody>
 </table>
 
-<p><strong>Tổng số tiền:</strong> <span id="totalAmount"></span></p>
+<p><strong>Tổng số tiền:</strong> {{totalAmount}}</p>
 
-<script>
-
-    const username = "Nguyen Van A";
-    const orderDetails = [
-        { name: "Sản phẩm 1", quantity: 2, price: 50000 },
-        { name: "Sản phẩm 2", quantity: 1, price: 75000 },
-        { name: "Sản phẩm 3", quantity: 3, price: 120000 }
-    ];
-
-    // Hiển thị username
-    document.getElementById("username").innerText = username;
-
-    let totalAmount = 0;
-    const tableBody = document.getElementById("orderDetails");
-    orderDetails.forEach(item => {
-        totalAmount += item.quantity * item.price;
-        const row = `<tr>
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>${(item.quantity * item.price).toLocaleString()} VND</td>
-            </tr>`;
-        tableBody.innerHTML += row;
-    });
-
-    // Hiển thị tổng số tiền
-    document.getElementById("totalAmount").innerText = totalAmount.toLocaleString() + " VND";
-</script>
 </body>
 </html>

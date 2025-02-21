@@ -48,6 +48,8 @@ public class OrderService implements IOrderService {
     @Override
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_order", UUID.randomUUID().toString());
+        Long userId = AuthenUtil.getUserId();
+        User user = userRepository.findById(userId).orElse(null);
 
         double totalPrice = 0;
         int totalProduct = 0;
@@ -84,6 +86,7 @@ public class OrderService implements IOrderService {
         order.setTotalPrice(totalPrice);
         order.setTotalProduct(totalProduct);
         order.setBusinessKey(processInstance.getBusinessKey());
+        order.setUser(user);
         orderRepository.save(order);
 
         CreateOrderResponse createOrderResponse = new CreateOrderResponse();
