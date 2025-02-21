@@ -4,5 +4,6 @@ public enum OrderEnum {
     PENDING,
     APPROVED,
     REJECTED,
-    ACCEPTED
+    ACCEPTED,
+    CANCELLED,
 }
