@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GetOrderResponse implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Long id;
     private Double totalPrice;
 
     private int totalProduct;

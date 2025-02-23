@@ -63,14 +63,13 @@ public class DelegateEmailOrderInformation implements JavaDelegate {
             Path path = new ClassPathResource("static/order-details.html").getFile().toPath();
             String emailBody = Files.readString(path, StandardCharsets.UTF_8);
 
-            // Thay thế dữ liệu động vào HTML
             emailBody = emailBody.replace("{{username}}", user.getUsername());
 
             StringBuilder orderDetailsHtml = new StringBuilder();
-            int totalAmount = 0;
+            double totalAmount = 0;
 
             for (OrderDetail item : order.getDetails()) {
-                double itemTotal = item.getQuantity() * item.getPrice();
+                double itemTotal = item.getPrice();
                 totalAmount += itemTotal;
 
                 orderDetailsHtml.append("<tr>")
@@ -81,12 +80,13 @@ public class DelegateEmailOrderInformation implements JavaDelegate {
             }
 
             emailBody = emailBody.replace("{{orderDetails}}", orderDetailsHtml.toString());
-            emailBody = emailBody.replace("{{totalAmount}}", String.format("%,d VND", totalAmount));
+            emailBody = emailBody.replace("{{totalAmount}}", String.format("%,.2f VND", totalAmount));
 
             return emailBody;
         } catch (IOException e) {
             throw new RuntimeException("Failed to read email template", e);
         }
     }
+
 
 }

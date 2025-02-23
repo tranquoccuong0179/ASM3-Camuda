@@ -258,6 +258,7 @@ public class OrderService implements IOrderService {
         List<GetOrderResponse> orderResponses = new ArrayList<>();
         for (Order order : orders.get()) {
             GetOrderResponse getOrderResponse = new GetOrderResponse();
+            getOrderResponse.setId(order.getId());
             getOrderResponse.setTotalPrice(order.getTotalPrice());
             getOrderResponse.setTotalProduct(order.getTotalProduct());
             getOrderResponse.setStatus(order.getStatus());
