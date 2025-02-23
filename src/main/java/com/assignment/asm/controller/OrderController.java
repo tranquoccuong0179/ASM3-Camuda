@@ -9,6 +9,7 @@ import com.assignment.asm.dto.response.order.UpdateOrderResponse;
 import com.assignment.asm.service.IOrderService;
 import com.assignment.asm.service.IProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.TaskService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -45,6 +47,20 @@ public class OrderController {
     public ResponseEntity<ApiResponse<GetOrderResponse>> ReceiveOrder(@PathVariable Long id) {
 
         GetOrderResponse response = orderService.receiveOrder(id);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "Create Success", response));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<GetOrderResponse>>> getOrdersForUser() {
+
+        List<GetOrderResponse> response = orderService.getOrdersForUser();
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "Create Success", response));
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<ApiResponse<List<GetOrderResponse>>> getOrdersForAdmin() {
+
+        List<GetOrderResponse> response = orderService.getOrdersForAdmin();
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(200, "Create Success", response));
     }
 

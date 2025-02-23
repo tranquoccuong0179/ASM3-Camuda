@@ -231,4 +231,40 @@ public class OrderService implements IOrderService {
         return getOrderResponse;
     }
 
+    @Override
+    public List<GetOrderResponse> getOrdersForUser() {
+        Long userId = AuthenUtil.getUserId();
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+
+        Optional<List<Order>> orders = orderRepository.findAllOrder(userId);
+        List<GetOrderResponse> orderResponses = new ArrayList<>();
+        for (Order order : orders.get()) {
+            GetOrderResponse getOrderResponse = new GetOrderResponse();
+            getOrderResponse.setTotalPrice(order.getTotalPrice());
+            getOrderResponse.setTotalProduct(order.getTotalProduct());
+            getOrderResponse.setStatus(order.getStatus());
+            orderResponses.add(getOrderResponse);
+        }
+
+        return orderResponses;
+    }
+
+    @Override
+    public List<GetOrderResponse> getOrdersForAdmin() {
+        Optional<List<Order>> orders = orderRepository.findAllOrder();
+        List<GetOrderResponse> orderResponses = new ArrayList<>();
+        for (Order order : orders.get()) {
+            GetOrderResponse getOrderResponse = new GetOrderResponse();
+            getOrderResponse.setTotalPrice(order.getTotalPrice());
+            getOrderResponse.setTotalProduct(order.getTotalProduct());
+            getOrderResponse.setStatus(order.getStatus());
+            orderResponses.add(getOrderResponse);
+        }
+
+        return orderResponses;
+    }
+
 }
